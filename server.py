@@ -10,6 +10,7 @@ import sys
 import http.server
 import socketserver
 import json
+from sys import argv
 
 class requestHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -100,7 +101,19 @@ def run(server_class=http.server.HTTPServer, handler_class=requestHandler, addr=
     # this function initializes and runs the server on the class defined above
     server_address = (addr, port)
     httpd = server_class(server_address, handler_class)
-    httpd.serve_forever()
+    
+    try:
+        print(f"Starting HTTP server on {addr}:{port}")
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        httpd.server_close()
 
-#call the run function
-run()
+
+if __name__ == '__main__':
+
+    if len(argv) == 2:
+        #call the run function with custom port
+        run(port=int(argv[1]))
+    else:
+        #call the run function with default port 8085
+        run()
