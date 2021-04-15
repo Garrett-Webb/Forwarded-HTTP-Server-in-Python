@@ -1,5 +1,11 @@
-#Garrett Webb
-#gswebb
+# server.py
+
+# Assignment 2
+# CruzIDs
+# Garrett Webb: gswebb
+# Kai Hsieh: kahsieh
+# Rahul Arora: raarora
+
 #CSE138 Kuper Spring 2021
 
 #acknowledgements
