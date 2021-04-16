@@ -77,8 +77,26 @@ class requestHandler(http.server.BaseHTTPRequestHandler):
         return
     
     def do_DELETE(self):
-        print("DELETE: unimplelmented")
-        self._set_headers(response_code=500)
+        if str(self.path).startswith("/key-value-store/"):
+            keystr = str(self.path).split("/key-value-store/",1)[1]
+            if(len(keystr) > 0 and len(keystr) < 50):
+                if keystr in kvstore:
+                    del kvstore[keystr]
+                    self._set_headers(response_code=200)
+                    response = bytes(json.dumps({"doesExist" : True, "message" : "Deleted successfully"}), 'utf-8')
+                else:
+                    self._set_headers(response_code=404)
+                    response = bytes(json.dumps({"doesExist" : False, "error" : "Key does not exist", "message" : "Error in DELETE"}), 'utf-8')
+            elif (len(keystr) > 50):
+                self._set_headers(response_code=400)
+                response = bytes(json.dumps({'error' : "Key is too long", 'message' : "Error in DELETE"}), 'utf-8')
+            elif(len(keystr) == 0):
+                self._set_headers(response_code=400)
+                response = bytes(json.dumps({'error' : "Key not specified", 'message' : "Error in DELETE"}), 'utf-8')
+            self.wfile.write(response)
+        else:
+            #default 500 code to clean up loose ends
+            self._set_headers(response_code=500)
         return
 
 def run(server_class=http.server.HTTPServer, handler_class=requestHandler, addr='', port=8085):
