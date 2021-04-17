@@ -19,6 +19,7 @@ import http.server
 import socketserver
 import json
 from sys import argv
+import os
 kvstore = {}
 
 class requestHandler(http.server.BaseHTTPRequestHandler):
@@ -103,18 +104,34 @@ def run(server_class=http.server.HTTPServer, handler_class=requestHandler, addr=
     # this function initializes and runs the server on the class defined above
     server_address = (addr, port)
     httpd = server_class(server_address, handler_class)
+    print(f"Starting HTTP server on {addr}:{port}")
     try:
-        print(f"Starting HTTP server on {addr}:{port}")
         httpd.serve_forever()
     except KeyboardInterrupt:
         httpd.server_close()
 
 
 if __name__ == '__main__':
+    d_ip = ''
+    d_port = 8085
+    try:
+        faddr = os.environ['FORWARDING_ADDRESS']
+        if len(faddr) > 0:
+            print("faddr: " + str(faddr))
+            d_port = str(faddr).split(":",1)[1]
+            print("d_port: " + str(d_port))
+            d_port = int(d_port)
+    except:
+        print("main instance")
+
+    x = 0
+    for arg in argv:
+        print("arg" + str(x) + ": " + str(argv[x]))
+        x = x+1
 
     if len(argv) == 2:
         #call the run function with custom port
         run(port=int(argv[1]))
     else:
         #call the run function with default port 8085
-        run()
+        run(port=d_port)
