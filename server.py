@@ -13,7 +13,7 @@
 #https://docs.python.org/3/library/http.server.html
 #https://stackoverflow.com/questions/31371166/reading-json-from-simplehttpserver-post-data
 
-
+import requests
 import sys
 import http.server
 import socketserver
@@ -21,14 +21,19 @@ import json
 from sys import argv
 import os
 kvstore = {}
+main = False
+faddr = ""
 
 class requestHandler(http.server.BaseHTTPRequestHandler):
+
+
     def _set_headers(self, response_code):
         self.send_response(response_code)
         self.send_header("Content-type", "application/json")
         self.end_headers()
 
     def do_GET(self):
+        
         if str(self.path).startswith("/key-value-store/"):
             keystr = str(self.path).split("/key-value-store/",1)[1]
             if(len(keystr) > 0 and len(keystr) < 50):
@@ -51,6 +56,8 @@ class requestHandler(http.server.BaseHTTPRequestHandler):
         return
 
     def do_PUT(self):
+        r = requests.put('http://' + faddr, params={key: value}, args)
+
         if str(self.path).startswith("/key-value-store/"):
             keystr = str(self.path).split("/key-value-store/",1)[1]
             if(len(keystr) > 0 and len(keystr) < 50):
@@ -123,6 +130,7 @@ if __name__ == '__main__':
             d_port = int(d_port)
     except:
         print("main instance")
+        main = True
 
     x = 0
     for arg in argv:
@@ -134,4 +142,4 @@ if __name__ == '__main__':
         run(port=int(argv[1]))
     else:
         #call the run function with default port 8085
-        run(port=d_port)
+        run()
