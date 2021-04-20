@@ -58,8 +58,9 @@ class requestHandler(http.server.BaseHTTPRequestHandler):
     def do_PUT(self):
         print(main_flag)
         if(main_flag == False):
-            print("PUT request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
-            #r = requests.put('http://' + faddr, params={key: value}, args)
+            self.data_string = self.rfile.read(int(self.headers['Content-Length']))
+            print("PUT request,\nPath: \n", str(self.path), "\nHeaders:\n", str(self.headers), "Data:\n", self.data_string)
+            #r = requests.put('http://' + faddr, self=self)
         else:
             if str(self.path).startswith("/key-value-store/"):
                 keystr = str(self.path).split("/key-value-store/",1)[1]
