@@ -25,8 +25,6 @@ main_flag = False
 faddr = ""
 
 class requestHandler(http.server.BaseHTTPRequestHandler):
-
-
     def _set_headers(self, response_code):
         self.send_response(response_code)
         self.send_header("Content-type", "application/json")
@@ -59,23 +57,31 @@ class requestHandler(http.server.BaseHTTPRequestHandler):
         print(main_flag)
         if(main_flag == False):
             self.data_string = self.rfile.read(int(self.headers['Content-Length']))
+            data_send = json.loads(self.data_string)
             print("PUT request,\nPath: \n", str(self.path), "\nHeaders:\n", str(self.headers), "Data:\n", self.data_string)
-            #r = requests.put('http://' + faddr, self=self)
+            r = requests.put('http://' + faddr + str(self.path), data=self.data_string, headers=self.headers)
         else:
-            if str(self.path).startswith("/key-value-store/"):
+            #if str(self.path).contains("/key-value-store/"):
+            if "/key-value-store/" in str(self.path):
                 keystr = str(self.path).split("/key-value-store/",1)[1]
                 if(len(keystr) > 0 and len(keystr) < 50):
-                    self.data_string = self.rfile.read(int(self.headers['Content-Length']))
-                    data = json.loads(self.data_string)
-                    if "value" not in data:
+                    try:
+                        data_current = json.loads(self.data)
+                        print("trydata: ", data_current)
+                    except:
+                        self.data_string = self.rfile.read(int(self.headers['Content-Length']))
+                        data_current = json.loads(self.data_string)
+                        print("exceptdata: ", data_string)
+                    
+                    if "value" not in data_current:
                         self._set_headers(response_code=400)
                         response = bytes(json.dumps({'error' : "Value is missing", 'message' : "Error in PUT"}), 'utf-8')
                     elif keystr in kvstore:
-                        kvstore[keystr] = data["value"]
+                        kvstore[keystr] = data_current["value"]
                         self._set_headers(response_code=200)
                         response = bytes(json.dumps({'message' : "Updated successfully", 'replaced' :True}), 'utf-8')
                     else:
-                        kvstore[keystr] = data["value"]
+                        kvstore[keystr] = data_current["value"]
                         self._set_headers(response_code=201)
                         response = bytes(json.dumps({'message' : "Added successfully", 'replaced' :False}), 'utf-8')
                 elif (len(keystr) > 50):
@@ -85,6 +91,9 @@ class requestHandler(http.server.BaseHTTPRequestHandler):
                 self.wfile.write(response)
             else:
                 #default 500 code to clean up loose ends
+                self.data_string = self.rfile.read(int(self.headers['Content-Length']))
+                data_send = json.loads(self.data_string)
+                print("PUT request,\nPath: \n", str(self.path), "\nHeaders:\n", str(self.headers), "Data:\n", self.data_string)
                 self._set_headers(response_code=500)
         return
     
