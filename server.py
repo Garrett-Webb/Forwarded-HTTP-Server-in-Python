@@ -150,9 +150,9 @@ if __name__ == '__main__':
     d_ip = ''
     d_port = 8085
     try:
-        faddr = os.environ['FORWARDING_ADDRESS']
+        faddr = os.environ['SOCKET_ADDRESS']
         if len(faddr) > 0:
-            print("faddr: " + str(faddr))
+            print("SOCKET_ADDRESS: " + str(faddr))
             d_port = str(faddr).split(":",1)[1]
             print("d_port: " + str(d_port))
             d_port = int(d_port)
