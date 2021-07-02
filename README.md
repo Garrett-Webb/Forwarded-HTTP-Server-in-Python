@@ -1,10 +1,9 @@
 # Forwarded distributed HTTP server
 Done for a class project
 
-## CruzIDs
-* `gswebb`
-* `kahsieh`
-* `raarora`
+* `Garrett Webb`
+* `Kai Hsieh`
+* `Rahul Arora`
 
 ## Citations:
 * https://docs.python-requests.org/en/master/
