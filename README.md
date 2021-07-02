@@ -1,5 +1,5 @@
-# CSE138_Assignment2
-Private repository for CSE138 - Distributed Sustems - Assignment 2
+# Forwarded distributed HTTP server
+Done for a class project
 
 ## CruzIDs
 * `gswebb`
@@ -18,7 +18,3 @@ Private repository for CSE138 - Distributed Sustems - Assignment 2
 * Kai: Added keyboard interrupt to exit. Added custom port command line option. Created a function that handles headers response. Forwarding functionality, testing
 
 * The forwarding functionality was programmed as a team over a video call, with all members contributing equally.
-
-## Acknowledgements:
-* 
-* 
